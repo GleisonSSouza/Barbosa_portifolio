@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Laís Barbosa · Design de sobrancelhas</title>
+  <meta name="description" content="Design de sobrancelhas, henna e brow lamination em Itaparica, BA. Cursos para profissionais.">
+
+  <!-- fontes -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Young+Serif&family=Figtree:wght@400;500;600;700&family=Pinyon+Script&display=swap">
+
+  <!-- estilos -->
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/sections.css">
+  <link rel="stylesheet" href="css/booking.css">
+  <link rel="stylesheet" href="css/motion.css">
+
+  <!-- avisa o CSS que há JavaScript antes do primeiro desenho (evita piscar) -->
+  <script>document.documentElement.classList.add('js')</script>
+
+  <!-- scripts (defer: rodam em ordem, depois que a página foi lida) -->
+  <script src="js/data.js" defer></script>
+  <script src="js/utils.js" defer></script>
+  <script src="js/booking.js" defer></script>
+  <script src="js/sections.js" defer></script>
+  <script src="js/testimonials.js" defer></script>
+  <script src="js/motion.js" defer></script>
+</head>
+<body>
+
+  <!-- barra fixa: aparece depois que o topo sai da tela -->
+  <header class="bar" inert>
+    <div class="wrap">
+      <a class="sig" href="#">Laís Barbosa</a>
+      <nav aria-label="Seções">
+        <ul>
+          <li><a href="#servicos">Serviços</a></li>
+          <li><a href="#cursos">Cursos</a></li>
+          <li><a href="#depoimentos">Depoimentos</a></li>
+          <li><a href="#sobre">Sobre</a></li>
+        </ul>
+      </nav>
+      <a class="btn" href="#" data-book="">Agendar</a>
+    </div>
+  </header>
+
+  <div class="wrap">
+    <nav class="nav" aria-label="Principal">
+      <ul>
+        <li><a href="#servicos">Serviços</a></li>
+        <li><a href="#cursos">Cursos</a></li>
+      </ul>
+      <a class="sig" href="#">Laís Barbosa</a>
+      <div class="end">
+        <ul>
+          <li><a href="#sobre">Sobre</a></li>
+          <li><a href="#contato">Contato</a></li>
+        </ul>
+        <a class="btn" href="#" data-book="">Agendar</a>
+      </div>
+    </nav>
+
+    <!-- abertura -->
+    <header class="hero">
+      <div>
+        <h1>Sobrancelhas que combinam com o seu rosto.</h1>
+        <p class="lede">Design, henna e brow lamination feitos com calma, a partir do mapeamento do seu rosto. Atendo em Itaparica, BA.</p>
+        <a class="btn" href="#" data-book="">Agendar horário</a>
+      </div>
+
+      <div class="portrait">
+        <svg class="blob" viewBox="0 0 400 480" preserveAspectRatio="none" aria-hidden="true"><path d="M205 10c70-6 140 34 168 102 26 64 4 120 14 186 9 60 16 128-36 162-46 30-118 18-176 18-60 0-128 8-158-44C-12 380 22 318 18 258 13 196-18 134 22 82 56 38 140 15 205 10z"/></svg>
+        <img src="assets/img/lais.webp" alt="Laís Barbosa de blazer bege" width="715" height="1200">
+        <span class="sig" aria-hidden="true">Laís</span>
+      </div>
+
+      <div>
+        <a class="stamp" href="#" data-book="" aria-label="Agenda aberta. Agendar horário">
+          <svg viewBox="0 0 170 170" aria-hidden="true">
+            <defs><path id="ring" d="M85,85 m-66,0 a66,66 0 1,1 132,0 a66,66 0 1,1 -132,0"/></defs>
+            <text><textPath href="#ring">AGENDA ABERTA ✿ TERÇA A SÁBADO ✿</textPath></text>
+          </svg>
+          <span class="core">Marque<br>já</span>
+        </a>
+        <p class="hours">Das 9h às 18h,<br>com pausa para o almoço.</p>
+      </div>
+    </header>
+  </div>
+
+  <!-- recado do mês (texto em js/data.js → banner) -->
+  <div class="notewrap">
+    <svg class="wave from-page to-blush" viewBox="0 0 1440 90" preserveAspectRatio="none" aria-hidden="true"><path d="M0 50c160-40 320-40 480 0s320 40 480 0 320-40 480 0v44H0z"/></svg>
+    <aside class="wrap" aria-label="Recado">
+      <div class="note"><h2 id="bTitle"></h2><p id="bText"></p></div>
+    </aside>
+  </div>
+
+  <main>
+    <!-- serviços -->
+    <section class="services" id="servicos">
+      <div class="wrap">
+        <div class="center">
+          <h2 data-rv="clip">Tabela de valores</h2>
+          <p data-rv>Escolha o procedimento para ver os horários livres. Todos incluem avaliação e finalização.</p>
+        </div>
+        <div class="menu" data-rv>
+          <span class="sig" data-rv="ink">Serviços</span>
+          <div id="svc"></div>
+          <div class="foot"><a class="btn soft" id="duv" target="_blank" rel="noopener">Tirar dúvidas no WhatsApp</a></div>
+        </div>
+      </div>
+    </section>
+    <svg class="wave from-blush to-page" viewBox="0 0 1440 90" preserveAspectRatio="none" aria-hidden="true"><path d="M0 40c240 50 480 50 720 10S1200 0 1440 40v54H0z"/></svg>
+
+    <!-- cursos -->
+    <section class="courses" id="cursos">
+      <div class="wrap">
+        <div class="center">
+          <h2 data-rv="clip">Cursos</h2>
+          <p data-rv>Aprenda a técnica com quem atende todos os dias. Turmas pequenas e prática com modelo.</p>
+        </div>
+        <div class="ca-seg" data-rv>
+          <div role="group" aria-label="Filtrar cursos">
+            <button aria-pressed="true" data-f="">Todos</button>
+            <button aria-pressed="false" data-f="Presencial">Presencial</button>
+            <button aria-pressed="false" data-f="Online">Online</button>
+          </div>
+        </div>
+        <div class="ca-grid all" id="crs" data-rv-group=""></div>
+      </div>
+    </section>
+
+    <!-- depoimentos -->
+    <section class="dp" id="depoimentos">
+      <div class="wrap dp1">
+        <div>
+          <h2 data-rv="clip">Quem já passou por aqui</h2>
+          <p class="lead" data-rv>Clientes e alunas contam como foi. Arraste o cartão para o lado ou use as setas.</p>
+          <div class="p-ctrl" data-rv>
+            <button id="pprev" aria-label="Depoimento anterior"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+            <button id="pnext" aria-label="Próximo depoimento"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+            <span class="p-count" id="pcount" aria-live="polite"></span>
+          </div>
+        </div>
+        <div class="pile" id="pile" data-rv="pop" role="group" aria-roledescription="pilha de depoimentos" aria-label="Depoimentos"></div>
+      </div>
+    </section>
+    <svg class="wave from-page to-sage" viewBox="0 0 1440 90" preserveAspectRatio="none" aria-hidden="true"><path d="M0 60c200-60 440-60 720-20s520 40 720-10v64H0z"/></svg>
+
+    <!-- sobre -->
+    <section class="about" id="sobre">
+      <div class="wrap">
+        <div class="circle" data-rv="pop"><img src="assets/img/lais.webp" alt="Retrato da Laís Barbosa" loading="lazy"></div>
+        <div>
+          <h2 data-rv="clip">Muito prazer</h2>
+          <p id="aBio" data-rv></p>
+          <span class="sig" data-rv="ink">Laís</span>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- rodapé -->
+  <footer class="footer" id="contato">
+    <div class="wrap">
+      <span class="sig" data-rv="ink">Laís Barbosa</span>
+      <p id="fAddr"></p>
+      <p>Terça a sábado, das 9h às 18h</p>
+      <div class="links">
+        <a href="#" data-book="">Agendar horário</a>
+        <a id="fWa" target="_blank" rel="noopener">WhatsApp</a>
+        <a id="fIg" target="_blank" rel="noopener"></a>
+      </div>
+      <small>© 2026 Laís Barbosa Designer</small>
+    </div>
+  </footer>
+
+</body>
+</html>
