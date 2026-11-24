@@ -1,0 +1,112 @@
+/* ==========================================================================
+   Painel da Laís: login, menu lateral, listas, formulários e calendário.
+   ========================================================================== */
+
+.adm { position: fixed; inset: 0; z-index: 40; display: none; grid-template-columns: 210px 1fr; background: var(--bg); }
+.adm.on { display: grid; }
+
+.side { display: flex; flex-direction: column; gap: 4px; padding: 22px 14px; overflow: auto; background: var(--leaf); }
+.side button { text-align: left; background: none; border: 0; padding: 10px 14px; border-radius: 12px; color: var(--ink); font: inherit; cursor: pointer; }
+.side button.a { background: var(--sage); }
+.side .sp { flex: 1; }
+
+.main { padding: 28px; overflow: auto; }
+.main h2 { margin-bottom: 10px; }
+
+.stats { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 14px; }
+.stat { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 16px; }
+.stat b { display: block; font: 600 34px 'Cormorant Garamond', serif; color: var(--car); }
+
+.two { display: grid; grid-template-columns: 1fr 1fr; gap: 0 14px; }
+.full { grid-column: 1 / -1; }
+.search { display: flex; gap: 8px; }
+
+.pill { font-size: 11px; padding: 2px 10px; border-radius: 20px; background: var(--cream); }
+.pill.confirmada { background: var(--sage); color: #342519; }
+.pill.cancelada { opacity: .5; }
+
+/* meses abertos */
+.mo { display: inline-block; margin: 0 6px 8px 0; padding: 6px 14px; border-radius: 20px; background: var(--card); border: 1px solid var(--line); color: var(--ink); text-transform: capitalize; cursor: pointer; }
+.mo:has(input:checked) { background: var(--car); color: var(--on-car); border-color: var(--car); }
+
+/* ---------- agenda por mês ---------- */
+.mlist { display: grid; gap: 8px; }
+.mrow { display: grid; grid-template-columns: 1fr auto auto auto; gap: 16px; align-items: center; padding: 12px 16px; background: var(--card); border: 1px solid var(--line); border-radius: 14px; }
+.mrow b { font-weight: 500; }
+.mst, .mct { font-size: 14px; color: var(--mut); }
+.mrow.open .mst { color: var(--car); font-weight: 500; }
+.mbar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 16px; margin: 0 0 14px; padding: 10px 14px; border-radius: 12px; background: var(--leaf); font-size: 14px; }
+.mbar b { font-weight: 500; }
+.mbar.open { background: var(--card); border: 1px solid var(--line); }
+
+/* ---------- cadastros: lista resumida + formulário ---------- */
+.list-head { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0 6px; }
+.item { display: flex; align-items: center; gap: 10px; padding: 12px 14px 12px 16px; margin: 8px 0; background: var(--card); border: 1px solid var(--line); border-radius: 14px; }
+.item .sum { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.item .sum b { font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.item .sum small { color: var(--mut); font-size: 13px; }
+.row.editing { border-color: var(--car); box-shadow: 0 0 0 1px var(--car); }
+.row.editing h3 { font-size: 26px; margin: 0 0 12px; }
+.form-err { min-height: 1.2em; margin: 0 0 8px; font-size: 14px; color: var(--err); }
+.flash { margin: 4px 0 0; padding: 8px 14px; border-radius: 10px; background: var(--leaf); font-size: 14px; }
+
+/* ---------- categorias ---------- */
+.cats .meta { color: var(--mut); margin: 2px 0 10px; }
+.catlist { display: grid; gap: 6px; margin-bottom: 12px; }
+.catrow { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; padding: 8px 10px 8px 14px; border: 1px solid var(--line); border-radius: 12px; background: var(--bg); }
+.catrow .nm { font-weight: 500; }
+.catrow small { color: var(--mut); flex: 1; }
+.catrow .tools { display: flex; gap: 6px; }
+.catrow .btn[disabled] { opacity: .35; background: transparent; border-color: var(--line); color: var(--ink); }
+.catadd { display: flex; gap: 8px; align-items: center; }
+.catadd input { margin: 0; }
+.catadd .btn { flex: none; }
+.cathint { min-height: 1.4em; margin: 6px 0 0; font-size: 14px; color: var(--mut); }
+.cathint b { color: var(--ink); font-weight: 500; }
+.cathint .lk { font-size: 14px; margin-left: 8px; color: var(--car); border-color: var(--car); }
+.newcat .cathint { margin-top: -6px; }
+
+/* ---------- calendário ---------- */
+.ct { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin: 12px 0 18px; }
+.ct .grow { flex: 1; }
+.seg { display: flex; gap: 6px; }
+
+.mg { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
+.hd { text-align: center; font-size: 12px; color: var(--mut); }
+.cd { min-height: 96px; padding: 6px; overflow: hidden; font-size: 12px; background: var(--card); border: 1px solid var(--line); border-radius: 12px; cursor: pointer; }
+.cd > span { font-weight: 500; }
+.cd.o { opacity: .4; }
+.cd.cl { background: var(--leaf); }
+.cd.td { border-color: var(--car); box-shadow: inset 0 0 0 1px var(--car); }
+.wk { display: grid; grid-template-columns: repeat(7, minmax(120px, 1fr)); gap: 8px; overflow-x: auto; }
+.wk .cd { min-height: 220px; }
+
+.chip { margin-top: 3px; padding: 2px 6px; border-radius: 8px; background: var(--sage); color: #342519; font-size: 11px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.chip.pendente { background: var(--cream); border: 1px dashed var(--car); }
+.chip.bloqueado { background: #8885; color: var(--ink); }
+
+/* visão do dia */
+.dr { display: flex; gap: 12px; align-items: flex-start; border-top: 1px solid var(--line); padding: 6px 0; }
+.dr > div { flex: 1; }
+.tt { width: 48px; flex: none; color: var(--mut); padding-top: 8px; }
+.free { background: none; border: 1px dashed var(--line); border-radius: 10px; padding: 8px 14px; color: var(--mut); cursor: pointer; font: inherit; }
+.free:hover { border-color: var(--car); color: var(--ink); }
+.busy { color: var(--mut); padding: 8px 0; font-size: 13px; }
+
+/* ---------- login ---------- */
+.login .box { width: min(400px, 100%); }
+.login .err { color: var(--err); font-size: 14px; margin: -4px 0 10px; }
+.login .hint { font-size: 13px; color: var(--mut); margin: 14px 0 0; }
+
+@media (max-width: 800px) {
+  .adm { grid-template-columns: 1fr; grid-template-rows: auto 1fr; }
+  .side { flex-direction: row; padding: 10px; }
+  .side .sp { display: none; }
+  .two { grid-template-columns: 1fr; }
+  .item { flex-wrap: wrap; }
+  .item .sum { flex-basis: 100%; }
+  .mrow { grid-template-columns: 1fr auto; gap: 4px 12px; }
+  .mrow b, .mrow .mst, .mrow .mct { grid-column: 1; }
+  .mrow .btn { grid-column: 2; grid-row: 1 / span 3; }
+  .cd { min-height: 70px; padding: 4px; }
+}
