@@ -35,7 +35,40 @@ const slotIds = (date, time, dur) => {
 };
 
 const waLink = (num, text) => `https://wa.me/${dg(num)}` + (text ? `?text=${encodeURIComponent(text)}` : '');
-const bgImg = u => u ? `style="background-image:url('${esc(u)}')"` : '';
+/* ---------- links e imagens vindos do banco ----------
+   Tudo o que a Laís (ou o banco) grava passa por aqui antes de virar
+   href, src ou fundo. Assim um link "javascript:..." ou um endereço
+   com aspas não consegue executar código nem quebrar o CSS. */
+
+// só links http(s); o resto (javascript:, data:, vbscript:...) vira vazio
+function safeLink(u) {
+  try {
+    const x = new URL(String(u || '').trim(), location.href);
+    return x.protocol === 'https:' || x.protocol === 'http:' ? x.href : '';
+  } catch (e) { return ''; }
+}
+
+// fotos e vídeos: arquivo do próprio site, data:image|video (enviados pelo painel) ou http(s)
+function safeMedia(u, kind = 'image') {
+  u = String(u || '').trim();
+  if (!u) return '';
+  // o conteúdo não precisa ser varrido (pode ter 20 MB): ele sempre é escapado no HTML e no CSS
+  if (new RegExp(`^data:(${kind})/[\\w.+-]+;base64,`, 'i').test(u)) return u;
+  if (/^[\w./-]+$/.test(u) && !u.includes('..')) return u;   // ex.: assets/img/lais.webp
+  return safeLink(u);
+}
+
+// url("...") para CSS, com aspas, barras e quebras de linha escapadas
+const cssUrl = u => `url("${String(u).replace(/["\\\n\r\f]/g, c => '\\' + c.charCodeAt(0).toString(16) + ' ')}")`;
+
+// fundo com foto: o HTML leva só data-bg; applyBgs() aplica pelo JavaScript
+const bgImg = u => `data-bg="${esc(safeMedia(u))}"`;
+function applyBgs(root = document) {
+  root.querySelectorAll('[data-bg]').forEach(el => {
+    const u = el.dataset.bg;
+    el.style.backgroundImage = [u && cssUrl(u), el.dataset.grad].filter(Boolean).join(', ');
+  });
+}
 
 const durText = s => s.durTxt || s.dur + ' min';
 const cap = s => s.charAt(0).toUpperCase() + s.slice(1);   // "dezembro de 2026" -> "Dezembro de 2026"

@@ -116,8 +116,8 @@ function monthsPanel() {
 }
 
 const monthToggle = k => isMonthOpen(k)
-  ? `<button class="btn o s" data-act="setMonth" data-k="${k}" data-open="0">Fechar agenda</button>`
-  : `<button class="btn s" data-act="setMonth" data-k="${k}" data-open="1">Abrir agenda</button>`;
+  ? `<button class="btn o s" data-act="setMonth" data-k="${esc(k)}" data-open="0">Fechar agenda</button>`
+  : `<button class="btn s" data-act="setMonth" data-k="${esc(k)}" data-open="1">Abrir agenda</button>`;
 
 async function setMonth(k, open) {
   const n = monthBookings(k).length;
@@ -220,10 +220,10 @@ function viewHours() {
   const c = S.cfg, D = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
   return `<h2>Horários</h2><div class="row">
     <div class="two">
-      <div><label>Abre</label><input type="time" id="c_open" value="${c.open}"></div>
-      <div><label>Fecha</label><input type="time" id="c_close" value="${c.close}"></div>
-      <div><label>Intervalo início</label><input type="time" id="c_bs" value="${c.bs}"></div>
-      <div><label>Intervalo fim</label><input type="time" id="c_be" value="${c.be}"></div>
+      <div><label>Abre</label><input type="time" id="c_open" value="${esc(c.open)}"></div>
+      <div><label>Fecha</label><input type="time" id="c_close" value="${esc(c.close)}"></div>
+      <div><label>Intervalo início</label><input type="time" id="c_bs" value="${esc(c.bs)}"></div>
+      <div><label>Intervalo fim</label><input type="time" id="c_be" value="${esc(c.be)}"></div>
     </div>
     <label>Meses abertos para agendamento (os demais ficam fechados)</label><p>${monthOptions()}</p>
     <label>Dias de funcionamento</label>
@@ -231,8 +231,8 @@ function viewHours() {
     <label>Folgas / feriados / bloqueios (datas AAAA-MM-DD separadas por vírgula)</label><textarea id="c_blocked">${esc(c.blocked)}</textarea>
     <h3>Prioridade para clientes fixas</h3>
     <div class="two">
-      <div><label>Exclusivo de</label><input type="date" id="c_pf" value="${c.pf}"></div>
-      <div><label>até</label><input type="date" id="c_pt" value="${c.pt}"></div>
+      <div><label>Exclusivo de</label><input type="date" id="c_pf" value="${esc(c.pf)}"></div>
+      <div><label>até</label><input type="date" id="c_pt" value="${esc(c.pt)}"></div>
     </div>
     <label>Telefones das clientes fixas autorizadas (um por linha)</label><textarea id="c_phones" rows="4">${esc(c.phones)}</textarea>
     <button class="btn s" data-act="saveCfg">Salvar</button>

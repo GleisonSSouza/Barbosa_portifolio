@@ -7,7 +7,7 @@ function drawCal() {
   const active = S.bookings.filter(b => b.status !== 'cancelada');
   const ofDay = k => active.filter(b => b.date === k).sort((x, y) => x.time.localeCompare(y.time));
   const closed = d => !c.days.includes(d.getDay()) || blockedDays().includes(iso(d));
-  const chip = b => `<div class="chip ${b.status}">${b.status === 'bloqueado' ? '🔒 ' + esc(b.name) : b.time + ' ' + esc(b.name.split(' ')[0])}</div>`;
+  const chip = b => `<div class="chip ${esc(b.status)}">${b.status === 'bloqueado' ? '🔒 ' + esc(b.name) : esc(b.time) + ' ' + esc(String(b.name || '').split(' ')[0])}</div>`;
   const dayCell = (d, extra, label, content) => {
     const k = iso(d);
     return `<div class="cd ${extra} ${k === today() ? 'td' : ''} ${closed(d) ? 'cl' : ''}" data-act="goDay" data-k="${k}"><span>${label}</span>${content}</div>`;
@@ -55,7 +55,7 @@ function drawCal() {
         let cell;
         if (b) cell = b.time === t ? `<div>${rowBooking(b)}</div>` : `<div class="busy">em atendimento</div>`;
         else if (c.bs && m >= tm(c.bs) && m < tm(c.be)) cell = `<div class="busy">Intervalo</div>`;
-        else cell = `<button class="free" data-act="bookAdm" data-k="${S.cd}" data-t="${t}">+ Livre</button>`;
+        else cell = `<button class="free" data-act="bookAdm" data-k="${esc(S.cd)}" data-t="${t}">+ Livre</button>`;
         body += `<div class="dr"><span class="tt">${t}</span>${cell}</div>`;
       }
       const outside = day.filter(b => !inHours(b));
@@ -71,7 +71,7 @@ function drawCal() {
       <button class="btn o s" data-act="calToday">Hoje</button>
       <button class="btn o s" data-act="calNav" data-n="1" aria-label="Próximo">›</button>
       <b class="title">${cap(title)}</b><span class="grow"></span>
-      <button class="btn s" data-act="bookAdm" data-k="${S.cd}">+ Novo agendamento</button>
+      <button class="btn s" data-act="bookAdm" data-k="${esc(S.cd)}">+ Novo agendamento</button>
       <button class="btn o s" data-act="blockTime">Bloquear horário</button>
     </div>
     <div class="mbar ${isMonthOpen(S.cd) ? 'open' : ''}">
@@ -95,15 +95,15 @@ function goDay(k) { S.cd = k; S.cv = 'day'; drawAdm(true); }
 /* ---------- um agendamento na lista ---------- */
 function rowBooking(b) {
   if (b.status === 'bloqueado') {
-    return `<div class="row">🔒 <b>Bloqueado</b> ${b.time} · ${b.dur} min — ${esc(b.name)} <button class="btn o s" data-act="unblock" data-id="${b.id}">Remover</button></div>`;
+    return `<div class="row">🔒 <b>Bloqueado</b> ${esc(b.time)} · ${esc(b.dur)} min — ${esc(b.name)} <button class="btn o s" data-act="unblock" data-id="${esc(b.id)}">Remover</button></div>`;
   }
-  const label = b.status === 'pendente' ? 'pré-agendado' : b.status;
+  const label = b.status === 'pendente' ? 'pré-agendado' : esc(b.status);
   const actions = b.status === 'cancelada' ? '' : `<br><br>
-    ${b.status === 'pendente' ? `<button class="btn s" data-act="confirmB" data-id="${b.id}">Confirmar</button> ` : ''}
-    <button class="btn o s" data-act="cancelB" data-id="${b.id}">Cancelar</button>
-    <button class="btn o s" data-act="rescheduleB" data-id="${b.id}">Remarcar</button>`;
-  return `<div class="row"><b>${brDate(b.date)} ${b.time}</b> · ${esc(b.svc)} <span class="pill ${b.status}">${label}</span><br>
-    ${esc(b.name)} · <a href="https://wa.me/55${esc(b.phone)}" target="_blank" rel="noopener">${esc(b.phone)}</a>${actions}</div>`;
+    ${b.status === 'pendente' ? `<button class="btn s" data-act="confirmB" data-id="${esc(b.id)}">Confirmar</button> ` : ''}
+    <button class="btn o s" data-act="cancelB" data-id="${esc(b.id)}">Cancelar</button>
+    <button class="btn o s" data-act="rescheduleB" data-id="${esc(b.id)}">Remarcar</button>`;
+  return `<div class="row"><b>${esc(brDate(String(b.date || '')))} ${esc(b.time)}</b> · ${esc(b.svc)} <span class="pill ${esc(b.status)}">${label}</span><br>
+    ${esc(b.name)} · <a href="https://wa.me/55${dg(b.phone)}" target="_blank" rel="noopener">${esc(b.phone)}</a>${actions}</div>`;
 }
 
 function filterBookings() {

@@ -10,6 +10,7 @@ function drawPublic() {
   drawCourses();
   drawFeedbacks();
   drawFooter();
+  applyBgs();   // fotos de fundo (ver bgImg em js/utils.js)
 }
 
 /* ---------- topo ---------- */
@@ -18,12 +19,16 @@ function drawHero() {
   $('#hName').textContent = c.name;
   $('#hTag').textContent = c.tag;
   $('#hBio').textContent = c.bio;
-  $('#hImg').setAttribute('style', c.img
-    ? `background-image:url('${esc(c.img)}'),linear-gradient(160deg,#B39977,#EDE6D9);background-position:center top;background-size:cover`
-    : '');
+  const img = safeMedia(c.img), hero = $('#hImg');
+  hero.removeAttribute('style');
+  if (img) Object.assign(hero.style, {
+    backgroundImage: cssUrl(img) + ', linear-gradient(160deg,#B39977,#EDE6D9)',
+    backgroundPosition: 'center top',
+    backgroundSize: 'cover'
+  });
 
   // meses com agenda aberta, a partir do mês atual
-  const open = (c.openMonths || [])
+  const open = openMonthList()
     .filter(k => k >= today().slice(0, 7))
     .map(k => noon(k + '-01').toLocaleDateString('pt-BR', { month: 'long' }));
   $('#agSt').textContent = open.length
@@ -40,11 +45,11 @@ function drawBanners() {
 
   $('#banners').innerHTML = list.map(b => `
     <div class="banner ${b.hi ? 'hi' : ''}" ${bgImg(b.img)}>
-      ${b.img ? '<div class="shade"></div>' : ''}
+      ${safeMedia(b.img) ? '<div class="shade"></div>' : ''}
       <div class="eyebrow">Comunicado</div>
       <h3>${esc(b.title)}</h3>
       <p>${esc(b.text)}</p>
-      ${b.link ? `<a class="btn s" href="${esc(b.link)}" target="_blank" rel="noopener">Saiba mais</a>` : ''}
+      ${safeLink(b.link) ? `<a class="btn s" href="${esc(safeLink(b.link))}" target="_blank" rel="noopener">Saiba mais</a>` : ''}
     </div>`).join('');
 }
 
@@ -79,7 +84,7 @@ function drawCourses() {
     const msg = 'Olá! Quero participar do curso ' + x.name;
     return `
     <div class="p ${i === S.open ? 'open' : ''}" data-act="openCourse" data-i="${i}">
-      <div class="bg" style="background-image:${im ? `url('${esc(im)}'),` : ''}linear-gradient(160deg,${COURSE_BG[i % 3]})"></div>
+      <div class="bg" ${bgImg(im)} data-grad="linear-gradient(160deg,${COURSE_BG[i % 3]})"></div>
       <div class="v">${esc(x.name)}</div>
       <div class="in">
         <span>
@@ -118,10 +123,11 @@ function repeat(a) {
 const avatar = f => `<span class="av ph" ${bgImg(f.av)}></span>`;
 
 function fbCard(f) {
-  const media = !f.media ? ''
+  const src = safeMedia(f.media, f.mt === 'video' ? 'video' : 'image');
+  const media = !src ? ''
     : f.mt === 'video'
-      ? `<video src="${esc(f.media)}" controls playsinline preload="metadata"></video>`
-      : `<img src="${esc(f.media)}" alt="Feedback" loading="lazy" data-act="zoom">`;
+      ? `<video src="${esc(src)}" controls playsinline preload="metadata"></video>`
+      : `<img src="${esc(src)}" alt="Feedback" loading="lazy" data-act="zoom">`;
   return `<div class="fc">${media}${f.text ? `<p>“${esc(f.text)}”</p>` : ''}<div class="who">${avatar(f)}<b>${esc(f.handle)}</b></div></div>`;
 }
 
@@ -139,7 +145,9 @@ function drawFeedbacks() {
 }
 
 function zoom(src) {
-  $('#zm').innerHTML = `<img src="${esc(src)}" alt="">`;
+  const safe = safeMedia(src);
+  if (!safe) return;
+  $('#zm').innerHTML = `<img src="${esc(safe)}" alt="">`;
   $('#zm').classList.add('on');
 }
 
@@ -149,6 +157,6 @@ function drawFooter() {
   $('#ct').innerHTML = `
     <h3>${esc(c.name)}</h3>
     <p>${esc(c.addr)}<br>
-      <a href="${waLink(c.wa)}">WhatsApp</a> · <a href="https://instagram.com/${esc(String(c.ig).replace('@', ''))}" target="_blank" rel="noopener">${esc(c.ig)}</a>
+      <a href="${waLink(c.wa)}">WhatsApp</a> · <a href="https://instagram.com/${encodeURIComponent(String(c.ig || '').replace('@', '').trim())}" target="_blank" rel="noopener">${esc(c.ig)}</a>
     </p>`;
 }
