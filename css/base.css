@@ -1,68 +1,120 @@
 /* ==========================================================================
-   Base: cores, tipografia, reset e peças reutilizadas (botões, assinatura, ondas)
+   Base: cores, tipografia, botões, campos, menu e rodapé.
    ========================================================================== */
 
 :root {
-  /* paleta */
-  --page: #F4F4EA;
-  --paper: #FFFDF8;
-  --sage: #C9D1AE;
-  --sage-d: #A9B486;
-  --olive: #3E4524;
-  --blush: #F1D9CF;
-  --mel: #E6BC5C;
-  --caramel: #9A6B3F;
-  --muted: #5E6444;
-
-  /* tipografia */
-  --display: 'Young Serif', Georgia, serif;
-  --body: 'Figtree', system-ui, sans-serif;
-  --script: 'Pinyon Script', cursive;
-
-  /* movimento */
-  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
-  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  --sage: #B39977;
+  --leaf: #DDD2BF;
+  --bg: #EDE6D9;
+  --cream: #E3D9C8;
+  --car: #684F36;
+  --ink: #342519;
+  --mut: #6e5b47;
+  --card: #F5F0E7;
+  --line: #D6C8B1;
+  --dp: #342519;   /* cor de destaque do agendamento */
+  --dpi: #EDE6D9;  /* texto sobre o destaque */
+  --on-car: #fff;  /* texto sobre a cor caramelo */
+  --err: #a3402a;  /* mensagens de erro */
+  --gutter: clamp(16px, 3.2vw, 56px);
+  box-sizing: border-box;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 
-*, *::before, *::after { box-sizing: border-box; }
-
-html { scroll-behavior: smooth; scroll-padding-top: 84px; }
-
-body {
-  margin: 0;
-  background: var(--page);
-  color: var(--olive);
-  font: 400 17px/1.65 var(--body);
-  -webkit-font-smoothing: antialiased;
-  overflow-x: hidden;
+/* modo escuro: segue o sistema, ou data-theme="dark" no <html> */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #2a1e14; --leaf: #342519; --cream: #3a2c20; --card: #33261b;
+    --ink: #EDE6D9; --mut: #bfae96; --line: #4a3a2b; --sage: #8a7556;
+    --car: #B39977; --dp: #B39977; --dpi: #342519; --on-car: #342519; --err: #f0a58c;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #2a1e14; --leaf: #342519; --cream: #3a2c20; --card: #33261b;
+  --ink: #EDE6D9; --mut: #bfae96; --line: #4a3a2b; --sage: #8a7556;
+  --car: #B39977; --dp: #B39977; --dpi: #342519; --on-car: #342519; --err: #f0a58c;
+  color-scheme: dark;
 }
 
-h1, h2, h3 { font-family: var(--display); font-weight: 400; margin: 0; line-height: 1.08; }
-a { color: inherit; }
-:focus-visible { outline: 2.5px solid var(--caramel); outline-offset: 3px; }
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 70px; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 300 16px/1.6 Jost, system-ui, sans-serif; }
 
-.wrap { max-width: 1200px; margin: 0 auto; padding: 0 clamp(16px, 4vw, 48px); }
+h1, h2, h3 { font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 500; line-height: 1.1; margin: 0; }
+h2 { font-size: clamp(32px, 5vw, 48px); }
 
-/* botões */
+section { max-width: 1560px; margin: auto; padding: 60px var(--gutter); }
+
+.eyebrow { letter-spacing: .25em; font-size: 12px; text-transform: uppercase; color: var(--car); margin-bottom: 10px; }
+.note { background: var(--cream); border-left: 3px solid var(--car); padding: 10px 14px; border-radius: 8px; font-size: 14px; margin: 10px 0; }
+.price { font: 600 24px 'Cormorant Garamond', serif; color: var(--car); }
+.tag { display: inline-block; background: var(--leaf); color: #342519; border-radius: 20px; padding: 2px 12px; font-size: 12px; margin-right: 6px; }
+
+/* fundo usado quando não há foto */
+.ph { background: linear-gradient(145deg, var(--sage), var(--cream) 60%, var(--car)); background-size: cover; background-position: center; }
+
+/* ---------- botões ---------- */
 .btn {
-  display: inline-flex; align-items: center; justify-content: center;
-  padding: 15px 28px; border: 0; border-radius: 999px;
-  background: var(--olive); color: var(--paper);
-  font: 600 16px var(--body); text-decoration: none; cursor: pointer;
-  transition: transform .2s var(--ease-out), background-color .2s ease;
+  display: inline-block; border: 1px solid var(--car); background: var(--car); color: var(--on-car);
+  padding: 13px 28px; border-radius: 40px; font: 500 13px Jost; letter-spacing: .12em;
+  text-transform: uppercase; text-decoration: none; cursor: pointer; transition: .3s;
 }
-.btn:hover { background: #2D331A; }
-.btn:active { transform: scale(.97); }
-.btn.soft { background: var(--paper); color: var(--olive); box-shadow: inset 0 0 0 1.5px var(--olive); }
-.btn.soft:hover { background: var(--sage); }
+.btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px #684f3655; }
+.btn.o { background: transparent; color: var(--ink); }
+.btn.s { padding: 8px 16px; font-size: 11px; }
+.btn[disabled] { background: #c8bca8; border-color: #c8bca8; color: #fff; cursor: not-allowed; box-shadow: none; transform: none; }
 
-/* assinatura manuscrita */
-.sig { font-family: var(--script); font-weight: 400; color: var(--caramel); line-height: 1; }
+/* botão com cara de link */
+.lk { background: none; border: 0; border-bottom: 1.5px solid var(--mut); color: var(--mut); font: inherit; font-size: 17px; cursor: pointer; padding: 0; }
 
-/* ondas entre seções: "from-*" é a cor de cima, "to-*" a de baixo */
-.wave { display: block; width: 100%; height: clamp(40px, 6vw, 90px); margin-bottom: -1px; position: relative; overflow: visible; }
-.wave.from-page { background: var(--page); }
-.wave.from-blush { background: var(--blush); }
-.wave.to-page path { fill: var(--page); }
-.wave.to-blush path { fill: var(--blush); }
-.wave.to-sage path { fill: var(--sage); }
+/* ---------- campos ---------- */
+input, select, textarea {
+  width: 100%; padding: 11px 14px; border: 1px solid var(--line); border-radius: 12px;
+  background: var(--card); color: var(--ink); font: inherit; margin: 4px 0 12px;
+}
+label { font-size: 13px; color: var(--mut); }
+input[type=checkbox] { width: auto; margin-right: 6px; }
+
+/* ---------- menu ---------- */
+nav {
+  position: sticky; top: 0; z-index: 20; display: flex; justify-content: space-between; align-items: center;
+  padding: 14px var(--gutter); border-bottom: 1px solid var(--line);
+  background: color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter: blur(10px);
+}
+nav a { color: var(--ink); text-decoration: none; margin-left: 22px; font-size: 14px; }
+nav b { font: 600 22px 'Cormorant Garamond', serif; }
+
+/* ---------- rodapé ---------- */
+footer { text-align: center; padding: 40px; color: var(--mut); font-size: 14px; border-top: 1px solid var(--line); }
+.adm-link { display: inline-block; margin-top: 18px; font-size: 13px; color: var(--mut); text-decoration: none; border-bottom: 1px solid var(--line); }
+.adm-link:hover { color: var(--ink); border-color: var(--car); }
+
+/* ---------- barras de rolagem (janelas, painel, faixa de meses) ---------- */
+.box, .main, .side, .months, .wk {
+  scrollbar-width: thin;   /* Firefox */
+  scrollbar-color: color-mix(in srgb, var(--mut) 45%, transparent) transparent;
+}
+@supports selector(::-webkit-scrollbar) {
+  /* Chrome e Safari: barra fina, arredondada e solta da borda */
+  .box, .main, .side, .months, .wk { scrollbar-width: auto; scrollbar-color: auto; }
+  .box::-webkit-scrollbar, .main::-webkit-scrollbar, .side::-webkit-scrollbar,
+  .months::-webkit-scrollbar, .wk::-webkit-scrollbar { width: 14px; height: 14px; }
+  .box::-webkit-scrollbar-track, .main::-webkit-scrollbar-track, .side::-webkit-scrollbar-track,
+  .months::-webkit-scrollbar-track, .wk::-webkit-scrollbar-track { background: transparent; }
+  .box::-webkit-scrollbar-track { margin: 24px 0; }   /* não encosta nos cantos arredondados */
+  .box::-webkit-scrollbar-thumb, .main::-webkit-scrollbar-thumb, .side::-webkit-scrollbar-thumb,
+  .months::-webkit-scrollbar-thumb, .wk::-webkit-scrollbar-thumb {
+    background: color-mix(in srgb, var(--mut) 40%, transparent) padding-box;
+    border: 5px solid transparent;
+    border-radius: 99px;
+  }
+  .box::-webkit-scrollbar-thumb:hover, .main::-webkit-scrollbar-thumb:hover, .side::-webkit-scrollbar-thumb:hover,
+  .months::-webkit-scrollbar-thumb:hover, .wk::-webkit-scrollbar-thumb:hover { background-color: color-mix(in srgb, var(--mut) 70%, transparent); }
+  .box::-webkit-scrollbar-corner, .main::-webkit-scrollbar-corner { background: transparent; }
+}
+
+@media (max-width: 800px) {
+  nav a.h { display: none; }
+}

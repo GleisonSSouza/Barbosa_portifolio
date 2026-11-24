@@ -1,133 +1,210 @@
 /* ==========================================================================
-   Agendamento: janela em 4 passos (procedimento, dia e horário, dados, revisão).
-   Qualquer elemento com data-book abre a janela; data-book="d1" já escolhe o serviço.
-   No fim, a cliente envia o pedido pelo WhatsApp.
+   Agendamento em 4 passos: procedimento > data e horário > dados > revisão.
+   O mesmo fluxo serve para a cliente (pré-agendamento) e para a Laís no
+   painel (B.adm = 1: agendamento já confirmado, sem as travas da agenda).
    ========================================================================== */
-window.Booking = (function () {
-  const D = window.SITE_DATA;
-  const { esc, brl, digits, wa } = window.U;
+let B = {};
+const STEPS = ['', 'Procedimento', 'Data e horário', 'Seus dados', 'Revisão'];
+const stepLabel = n => n === 3 && B.adm ? 'Dados da cliente' : STEPS[n];
 
-  const WD = ['dom', 'seg', 'ter', 'qua', 'qui', 'sex', 'sáb'];
-  const MO = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'];
-  const STEPS = ['Procedimento', 'Data e horário', 'Seus dados', 'Revisão'];
-  const PHONE_EXAMPLE = '(71) 9 9999-9999';
+/* as regras de mês aberto, dias e horários ficam em js/agenda.js */
 
-  // horários
-  const toMin = t => { const [h, m] = t.split(':'); return +h * 60 + +m; };
-  const toHHMM = m => String(m / 60 | 0).padStart(2, '0') + ':' + String(m % 60).padStart(2, '0');
-  const iso = d => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
-  const brDate = s => s.split('-').reverse().join('/');
+/* ---------- abrir e fechar ---------- */
+function book(id) {
+  B = { adm: 0, step: 1, sel: id ? [id] : [], svc: null, month: '', date: '', time: '', name: '', phone: '', err: '' };
+  $('#bk').classList.add('on');
+  drawBk();
+}
 
-  // próximos dias de atendimento (pula hoje se o expediente já acabou)
-  function openDays(n = 12) {
-    const out = [], now = new Date();
-    for (let i = 0; out.length < n && i < 60; i++) {
-      const d = new Date(now.getFullYear(), now.getMonth(), now.getDate() + i);
-      if (i === 0 && now.getHours() * 60 + now.getMinutes() >= toMin(D.cfg.close) - 60) continue;
-      if (D.cfg.days.includes(d.getDay())) out.push(d);
+function bookAdm(date, time) {
+  B = { adm: 1, step: 1, sel: [], svc: null, month: monthOf(date || S.cd), date: date || '', time: time || '', name: '', phone: '', err: '' };
+  $('#bk').classList.add('on');
+  drawBk();
+}
+
+const closeBk = () => $('#bk').classList.remove('on');
+
+/* ---------- ações dos passos ---------- */
+function toggleService(id) {
+  const i = B.sel.indexOf(id);
+  i < 0 ? B.sel.push(id) : B.sel.splice(i, 1);
+  drawBk();
+}
+
+function chosenServices() {
+  return B.sel.map(i => S.services.find(x => x.id === i && x.on)).filter(Boolean);
+}
+
+function confirmServices() {
+  const list = chosenServices();
+  if (!list.length) return;
+  B.svc = {
+    id: list.map(x => x.id).join(','),
+    name: list.map(x => x.name).join(' + '),
+    dur: list.reduce((a, x) => a + +x.dur, 0),
+    price: list.reduce((a, x) => a + +x.price, 0)
+  };
+  B.step = 2;
+  if (!B.month) B.month = B.date ? monthOf(B.date) : (openMonthsAhead()[0] || monthOf(today()));
+  if (B.date && !freeTimes(B.date, B.svc, B.adm).includes(B.time)) B.time = '';
+  drawBk();
+}
+
+function saveContact() {
+  B.name = $('#bn').value.trim();
+  B.phone = $('#bp').value.trim();
+  if (B.name && dg(B.phone).length >= 10) { B.step = 4; B.err = ''; }
+  else B.err = 'Informe nome e telefone com DDD.';
+  drawBk();
+}
+
+function goStep(n) { B.step = n; B.err = ''; drawBk(); }
+function pickMonth(k) { B.month = k; if (monthOf(B.date) !== k) { B.date = ''; B.time = ''; } drawBk(); }
+function pickDate(k) { B.date = k; B.time = ''; drawBk(); }
+function pickTime(t) { B.time = t; drawBk(); }
+
+/* ---------- desenho de cada passo ---------- */
+function stepServices() {
+  const on = S.services.filter(s => s.on), list = chosenServices();
+  const td = list.reduce((a, x) => a + +x.dur, 0), tp = list.reduce((a, x) => a + +x.price, 0);
+
+  return `<p class="sv">Escolha um ou mais procedimentos:</p>` +
+    byCat(on).map(([cat, items]) =>
+      (cat ? `<p class="cat2">${esc(cat)}</p>` : '') +
+      items.map(s => `
+        <div class="row sc ${B.sel.includes(s.id) ? 'on' : ''}" data-act="toggleService" data-id="${esc(s.id)}">
+          <span class="ck">${B.sel.includes(s.id) ? '✓' : ''}</span>
+          <div><b>${esc(s.name)}</b><br><small>${brl(s.price)} · ${esc(durText(s))}</small></div>
+        </div>`).join('')
+    ).join('') +
+    (list.length ? `<p class="sv"><b>${list.length} selecionado${list.length > 1 ? 's' : ''}</b> · ${td} min · ${brl(tp)}</p>` : '') +
+    `<div class="cta"><button class="btn" ${list.length ? '' : 'disabled'} data-act="confirmServices">Continuar</button></div>`;
+}
+
+// meses: a cliente vê de cara quais estão abertos
+function monthTabs() {
+  return `<div class="months">${monthsAhead().map(k => {
+    const open = isMonthOpen(k);
+    return `<button type="button" class="mchip ${k === B.month ? 'sel' : ''} ${open ? '' : 'closed'}" data-act="pickMonth" data-k="${k}" aria-pressed="${k === B.month}">
+      <b>${monthName(k)}</b><small>${open ? 'agenda aberta' : 'fechada'}</small></button>`;
+  }).join('')}</div>`;
+}
+
+// calendário do mês com a situação de cada dia
+function monthGrid() {
+  const first = noon(B.month + '-01');
+  let h = `<div class="cal">${WD.map(w => `<span class="wd">${w}</span>`).join('')}`;
+  for (let i = 0; i < first.getDay(); i++) h += '<span></span>';
+
+  const label = { past: 'já passou', off: 'sem atendimento', free: 'com horários livres', full: 'lotado' };
+  for (let d = 1; d <= daysInMonth(B.month); d++) {
+    const k = B.month + '-' + String(d).padStart(2, '0'), st = dayState(k, B.svc, B.adm);
+    const off = st === 'past' || st === 'off';
+    h += `<button type="button" class="dd is-${st} ${k === B.date ? 'sel' : ''}" ${off ? 'disabled' : `data-act="pickDate" data-k="${k}"`}
+      aria-label="${d} de ${monthName(k)}, ${label[st]}" aria-pressed="${k === B.date}">${d}<i></i></button>`;
+  }
+  return h + `</div>
+    <p class="legend"><span><i class="is-free"></i>com horários livres</span><span><i class="is-full"></i>lotado</span><span><i class="is-off"></i>sem atendimento</span></p>`;
+}
+
+// horários do dia escolhido: só os livres aparecem
+function timeGrid() {
+  const times = freeTimes(B.date, B.svc, B.adm);
+  const day = noon(B.date).toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' });
+  let h = `<p class="day-title">Horários livres de ${day}</p>`;
+  if (!B.adm && isPriority(B.date)) h += `<div class="note">Período exclusivo para clientes fixas. Você precisará estar na lista de autorizadas.</div>`;
+  if (!times.length) return h + `<div class="empty">Todos os horários deste dia já foram reservados. Escolha outro dia.</div>`;
+
+  return h + `<div class="slots">${times.map(t =>
+    `<button type="button" class="slot ${t === B.time ? 'sel' : ''}" data-act="pickTime" data-t="${t}" aria-pressed="${t === B.time}">${t}</button>`).join('')}</div>`;
+}
+
+function datePicker() {
+  let h = monthTabs();
+
+  if (!isMonthOpen(B.month)) {
+    if (!B.adm) {
+      const others = openMonthsAhead();
+      return h + `<div class="empty"><b>A agenda de ${monthName(B.month)} está fechada.</b><br>${others.length
+        ? `Agenda aberta em: ${others.map(k => monthName(k)).join(', ')}.`
+        : 'Fique atenta aos comunicados: assim que a agenda abrir, você poderá escolher seu horário aqui.'}</div>`;
     }
-    return out;
+    h += `<div class="note">A agenda de ${monthName(B.month)} está fechada para as clientes. Pelo painel você pode agendar mesmo assim.</div>`;
   }
 
-  // horários livres de 30 em 30 min, respeitando a pausa do almoço
-  function freeSlots(date, svc) {
-    const c = D.cfg, dur = +svc.dur, out = [], now = new Date(), today = iso(now);
-    for (let m = toMin(c.open); m + dur <= toMin(c.close); m += 30) {
-      if (m < toMin(c.be) && m + dur > toMin(c.bs)) continue;
-      if (date === today && m <= now.getHours() * 60 + now.getMinutes()) continue;
-      out.push(toHHMM(m));
-    }
-    return out;
+  h += monthGrid();
+  if (!B.date || monthOf(B.date) !== B.month) return h + `<div class="empty">Escolha um dia para ver os horários.</div>`;
+  return h + timeGrid();
+}
+
+function stepDate() {
+  const ok = B.date && B.time && freeTimes(B.date, B.svc, B.adm).includes(B.time);
+  return datePicker() + `<div class="cta"><button class="btn" ${ok ? '' : 'disabled'} data-act="goStep" data-n="3">Continuar</button><button class="lk" data-act="goStep" data-n="1">Trocar procedimento</button></div>`;
+}
+
+function stepContact() {
+  return `<label for="bn">Nome</label><input id="bn" autocomplete="name" value="${esc(B.name)}">
+    <label for="bp">Telefone / WhatsApp</label><input id="bp" inputmode="tel" autocomplete="tel" value="${esc(B.phone)}">
+    <div class="cta"><button class="btn" data-act="saveContact">Revisar</button><button class="lk" data-act="goStep" data-n="2">Voltar</button></div>`;
+}
+
+function stepReview() {
+  return `<div class="row"><b>${esc(B.svc.name)}</b><br>${brDate(B.date)} às ${B.time} (${B.svc.dur} min)<br>${esc(B.name)} · ${esc(B.phone)}<br><span class="price">${brl(B.svc.price)}</span></div>
+    <div class="cta"><button class="btn" id="cf" data-act="confirmBooking">${B.adm ? 'Confirmar' : 'Pré-agendar'}</button><button class="lk" data-act="goStep" data-n="3">Voltar</button></div>`;
+}
+
+function stepDone() {
+  const a = B.adm;
+  const msg = a
+    ? `Olá ${B.name}! Seu horário de ${B.svc.name} está confirmado para ${brDate(B.date)} às ${B.time}.`
+    : `Olá! Fiz o pré-agendamento de ${B.svc.name} em ${brDate(B.date)} às ${B.time}. Nome: ${B.name}`;
+  return `<div class="note"><b>${a ? 'Agendamento criado e confirmado!' : 'Pré-agendado!'}</b><br>${esc(B.svc.name)} em ${brDate(B.date)} às ${B.time}.${a ? '' : '<br>Seu horário está <b>pré-agendado</b> e reservado para você até a confirmação da profissional, que entrará em contato pelo WhatsApp.'}</div>
+    <a class="btn" target="_blank" rel="noopener" href="${waLink(a ? '55' + dg(B.phone) : S.cfg.wa, msg)}">${a ? 'Avisar cliente' : 'Avisar'} no WhatsApp</a>`;
+}
+
+function drawBk() {
+  let h = `<div class="bh"><div><h2>${B.adm ? 'Novo agendamento' : 'Agendar horário'}</h2><p class="st">${B.step < 5 ? `Passo ${B.step} de 4 · ${stepLabel(B.step)}` : 'Pronto!'}</p></div><button class="x" data-act="closeBk" aria-label="Fechar">✕</button></div>`;
+
+  if (!db) {
+    h += `<div class="note">O agendamento online está indisponível neste navegador. Agende pelo <a href="${waLink(S.cfg.wa)}">WhatsApp</a>.</div>`;
+  } else {
+    if (B.step > 1 && B.step < 5) h += `<p class="sv"><b>${esc(B.svc.name)}</b> · ${B.svc.dur} min · ${brl(B.svc.price)}</p>`;
+    if (B.err) h += `<p class="note" role="alert">${esc(B.err)}</p>`;
+    h += [null, stepServices, stepDate, stepContact, stepReview, stepDone][B.step]();
   }
 
-  let dlg, B;
+  $('#bkb').innerHTML = h;
+  const sel = $('.mchip.sel');   // deixa o mês escolhido visível na faixa
+  if (sel) { const box = sel.parentElement; box.scrollLeft += sel.getBoundingClientRect().left - box.getBoundingClientRect().left - 8; }
+}
 
-  function ensure() {
-    if (dlg) return;
-    dlg = document.createElement('dialog');
-    dlg.className = 'bk';
-    dlg.setAttribute('aria-labelledby', 'bk-title');
-    document.body.append(dlg);
-    dlg.addEventListener('click', e => { if (e.target === dlg) dlg.close(); }); // clique fora fecha
-  }
+/* ---------- gravar ---------- */
+async function confirmBooking() {
+  const btn = $('#cf');
+  btn.disabled = true;
+  const fail = msg => { B.err = msg; drawBk(); };
 
-  function open(id) {
-    ensure();
-    B = { svc: D.services.find(s => s.id === id) || null, date: '', time: '', name: '', phone: '', err: '' };
-    B.step = B.svc ? 2 : 1;
-    draw();
-    dlg.showModal();
-  }
+  try {
+    if (!B.adm && !isMonthOpen(B.date)) { B.step = 2; B.time = ''; return fail('A agenda deste mês foi fechada. Escolha outro mês.'); }
+    if (!freeTimes(B.date, B.svc, B.adm).includes(B.time)) { B.step = 2; B.time = ''; return fail('Este horário não está mais disponível. Escolha outro.'); }
+    if (!B.adm && isPriority(B.date) && !fixedPhones().includes(dg(B.phone))) return fail('Este período é exclusivo para clientes fixas.');
 
-  function go(step) { B.step = step; B.err = ''; draw(); }
-
-  function draw() {
-    let h = `<div class="bk-in"><div class="bk-head"><h2 class="bk-title" id="bk-title">${B.step === 5 ? 'Quase lá' : 'Agendar horário'}</h2><button class="bk-close" data-a="close" aria-label="Fechar">✕</button></div>`;
-    if (B.step < 5) h += `<p class="bk-step">Passo ${B.step} de 4 · ${STEPS[B.step - 1]}</p>`;
-
-    if (B.step === 1) {
-      h += `<p class="bk-q">Qual procedimento você quer fazer?</p><div class="bk-opts">` +
-        D.services.map(s => `<button class="bk-opt" data-svc="${s.id}"><b>${esc(s.name)}</b><small>${brl(s.price)} · ${s.dur} min</small></button>`).join('') +
-        `</div>`;
-    } else if (B.step === 2) {
-      h += `<p class="bk-q"><b>${esc(B.svc.name)}</b> · ${B.svc.dur} min · ${brl(B.svc.price)}</p>`;
-      h += `<div class="bk-days" role="group" aria-label="Dia">` + openDays().map(d => {
-        const v = iso(d);
-        return `<button class="bk-day" data-day="${v}" aria-pressed="${v === B.date}"><span>${WD[d.getDay()]}</span><b>${d.getDate()}</b><span>${MO[d.getMonth()]}</span></button>`;
-      }).join('') + `</div>`;
-      if (B.date) {
-        const free = freeSlots(B.date, B.svc);
-        h += free.length
-          ? `<div class="bk-slots" role="group" aria-label="Horário">${free.map(t => `<button class="bk-slot" data-time="${t}" aria-pressed="${t === B.time}">${t}</button>`).join('')}</div>`
-          : `<div class="bk-empty">Não há horários livres nesse dia. Escolha outra data.</div>`;
-      } else {
-        h += `<p class="bk-empty">Escolha um dia para ver os horários livres.</p>`;
+    const ids = slotIds(B.date, B.time, B.svc.dur);
+    for (const i of ids) {
+      if ((await db.doc('slots/' + i).get()).exists) {
+        B.step = 2; B.time = '';
+        return fail('Este horário acabou de ser ocupado. Escolha outro.');
       }
-      h += `<div class="bk-actions"><button class="bk-btn" data-a="next" ${B.time ? '' : 'disabled'}>Continuar</button><button class="bk-link" data-a="back">Trocar procedimento</button></div>`;
-    } else if (B.step === 3) {
-      h += `<label class="bk-field"><span>Nome</span><input id="bk-n" autocomplete="name" value="${esc(B.name)}"></label>
-            <label class="bk-field"><span>WhatsApp com DDD</span><input id="bk-p" inputmode="tel" autocomplete="tel" placeholder="${PHONE_EXAMPLE}" value="${esc(B.phone)}"></label>
-            ${B.err ? `<p class="bk-err" role="alert">${B.err}</p>` : ''}
-            <div class="bk-actions"><button class="bk-btn" data-a="review">Revisar pedido</button><button class="bk-link" data-a="back">Voltar</button></div>`;
-    } else if (B.step === 4) {
-      h += `<dl class="bk-sum"><dt>Procedimento</dt><dd>${esc(B.svc.name)}</dd><dt>Dia</dt><dd>${brDate(B.date)} às ${B.time}</dd><dt>Duração</dt><dd>${B.svc.dur} min</dd><dt>Nome</dt><dd>${esc(B.name)}</dd><dt>Valor</dt><dd>${brl(B.svc.price)}</dd></dl>
-            <div class="bk-actions"><button class="bk-btn" data-a="confirm">Confirmar agendamento</button><button class="bk-link" data-a="back">Voltar</button></div>`;
-    } else {
-      const msg = `Olá, Laís! Quero agendar ${B.svc.name} no dia ${brDate(B.date)} às ${B.time}. Meu nome é ${B.name}.`;
-      h += `<p class="bk-q bk-done">Seu pedido de <b>${esc(B.svc.name)}</b> para ${brDate(B.date)} às ${B.time} foi registrado e aguarda a confirmação da Laís.</p>
-            <div class="bk-actions"><a class="bk-btn" href="${wa(msg)}" target="_blank" rel="noopener">Avisar no WhatsApp</a><button class="bk-link" data-a="close">Fechar</button></div>
-            <p class="bk-note">Você recebe a confirmação pelo WhatsApp.</p>`;
     }
-
-    dlg.innerHTML = h + '</div>';
-    const focus = dlg.querySelector('[aria-pressed=true]') || dlg.querySelector('input');
-    if (focus && B.step !== 2) focus.focus();
+    for (const i of ids) await db.doc('slots/' + i).set({ date: B.date, st: B.adm ? 'ok' : 'pre' });
+    await db.collection('bookings').add({
+      svc: B.svc.name, svcId: B.svc.id, dur: +B.svc.dur, price: +B.svc.price,
+      date: B.date, time: B.time, name: B.name, phone: dg(B.phone),
+      status: B.adm ? 'confirmada' : 'pendente', manual: !!B.adm, ids, at: Date.now()
+    });
+    B.step = 5; B.err = '';
+    drawBk();
+  } catch (e) {
+    fail('Não foi possível agendar: ' + (e.message || e.code));
   }
-
-  document.addEventListener('click', e => {
-    const trigger = e.target.closest('[data-book]');
-    if (trigger) { e.preventDefault(); open(trigger.dataset.book); return; }
-    if (!dlg || !dlg.contains(e.target)) return;
-
-    const b = e.target.closest('button');
-    if (!b) return;
-    if (b.dataset.svc) { B.svc = D.services.find(s => s.id === b.dataset.svc); B.date = B.time = ''; go(2); }
-    else if (b.dataset.day) { B.date = b.dataset.day; B.time = ''; draw(); dlg.querySelector(`[data-day="${B.date}"]`).focus(); }
-    else if (b.dataset.time) { B.time = b.dataset.time; draw(); dlg.querySelector(`[data-time="${B.time}"]`).focus(); }
-    else switch (b.dataset.a) {
-      case 'close': dlg.close(); break;
-      case 'back': go(B.step - 1); break;
-      case 'next': go(3); break;
-      case 'review':
-        B.name = dlg.querySelector('#bk-n').value.trim();
-        B.phone = dlg.querySelector('#bk-p').value.trim();
-        if (!B.name) { B.err = 'Escreva seu nome.'; draw(); }
-        else if (digits(B.phone).length < 10) { B.err = `Escreva o WhatsApp com DDD, por exemplo ${PHONE_EXAMPLE}.`; draw(); }
-        else go(4);
-        break;
-      case 'confirm': go(5); break;
-    }
-  });
-
-  return { open };
-})();
+}
