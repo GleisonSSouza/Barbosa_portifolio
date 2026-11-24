@@ -8,7 +8,9 @@
 const MONTHS_AHEAD = 6;   // quantos meses a cliente vê na escolha de data
 
 const monthOf = k => String(k).slice(0, 7);
-const isMonthOpen = k => (S.cfg.openMonths || []).includes(monthOf(k));
+// meses abertos válidos ("AAAA-MM"); qualquer outra coisa vinda do banco é ignorada
+const openMonthList = () => (Array.isArray(S.cfg.openMonths) ? S.cfg.openMonths : []).filter(k => /^\d{4}-\d{2}$/.test(k));
+const isMonthOpen = k => openMonthList().includes(monthOf(k));
 // nome do mês em minúsculas ("dezembro"); com year = "dezembro de 2026"
 const monthName = (k, year) => noon(monthOf(k) + '-01').toLocaleDateString('pt-BR', year ? { month: 'long', year: 'numeric' } : { month: 'long' });
 const daysInMonth = k => { const d = noon(monthOf(k) + '-01'); return new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate(); };
@@ -18,11 +20,11 @@ function monthsAhead(n = MONTHS_AHEAD) {
   const out = [], d = new Date();
   d.setDate(1); d.setHours(12, 0, 0, 0);
   for (let i = 0; i < n; i++) { out.push(monthOf(iso(d))); d.setMonth(d.getMonth() + 1); }
-  (S.cfg.openMonths || []).forEach(k => { if (k > out[out.length - 1]) out.push(k); });
+  openMonthList().forEach(k => { if (k > out[out.length - 1]) out.push(k); });
   return out;
 }
 
-const openMonthsAhead = () => (S.cfg.openMonths || []).filter(k => k >= monthOf(today())).sort();
+const openMonthsAhead = () => openMonthList().filter(k => k >= monthOf(today())).sort();
 
 const isWorkDay = k => S.cfg.days.includes(noon(k).getDay()) && !blockedDays().includes(k);
 const isPriority = d => S.cfg.pf && S.cfg.pt && d >= S.cfg.pf && d <= S.cfg.pt;
@@ -67,7 +69,7 @@ function dayState(k, svc, adm) {
 const cfgToSave = c => { const o = { ...c }; if (o.img === HERO) delete o.img; return o; };
 
 async function setMonthOpen(k, open) {
-  const set = new Set(S.cfg.openMonths || []);
+  const set = new Set(openMonthList());
   open ? set.add(monthOf(k)) : set.delete(monthOf(k));
   S.cfg.openMonths = [...set].sort();
   try { await db.doc('config/main').set(cfgToSave(S.cfg)); }

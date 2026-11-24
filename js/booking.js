@@ -85,7 +85,7 @@ function stepServices() {
 function monthTabs() {
   return `<div class="months">${monthsAhead().map(k => {
     const open = isMonthOpen(k);
-    return `<button type="button" class="mchip ${k === B.month ? 'sel' : ''} ${open ? '' : 'closed'}" data-act="pickMonth" data-k="${k}" aria-pressed="${k === B.month}">
+    return `<button type="button" class="mchip ${k === B.month ? 'sel' : ''} ${open ? '' : 'closed'}" data-act="pickMonth" data-k="${esc(k)}" aria-pressed="${k === B.month}">
       <b>${monthName(k)}</b><small>${open ? 'agenda aberta' : 'fechada'}</small></button>`;
   }).join('')}</div>`;
 }
