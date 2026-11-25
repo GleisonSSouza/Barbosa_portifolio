@@ -138,7 +138,7 @@ function viewBookings() {
    gravado no banco ao clicar em Salvar). */
 const ITEM = {
   services: { one: 'serviço', title: x => x.name, sub: x => [x.cat, brl(x.price), durText(x)] },
-  courses: { one: 'curso', title: x => x.name, sub: x => [x.mode, x.dur, brl(x.price)] },
+  courses: { one: 'curso', title: x => x.name, sub: x => [x.mode, x.dur, +x.price > 0 ? brl(x.price) : 'valor sob consulta'] },
   banners: { one: 'banner', title: x => x.title, sub: x => [x.from && x.to ? `${brDate(x.from)} a ${brDate(x.to)}` : x.from ? 'desde ' + brDate(x.from) : x.to ? 'até ' + brDate(x.to) : 'sem data'] },
   feedbacks: { one: 'feedback', title: x => x.handle, sub: x => [x.role, x.media ? (x.mt === 'video' ? 'com vídeo' : 'com print') : ''] }
 };

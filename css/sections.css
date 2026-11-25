@@ -77,6 +77,8 @@
 .in h3 { font-size: 44px; color: #fff; }
 .in div, .in small { color: #EDE6D9; }
 .in small { font-size: 14px; display: block; }
+.in .price { color: #d9c2a3; }   /* preço legível sobre a foto escura */
+.in .tag { background: #DDD2BF; color: #342519; }   /* mesmas cores no modo claro e escuro (o card é sempre escuro) */
 
 .ar {
   position: absolute; top: 50%; z-index: 5; width: 46px; height: 46px; border-radius: 50%;
@@ -123,9 +125,11 @@
 @media (max-width: 800px) {
   .hero { grid-template-columns: 1fr; }
   .portrait { max-width: 320px; }
-  .acc { flex-direction: column; }   /* mantém a altura de 580px: o curso aberto ocupa o espaço que sobra */
+  /* no celular o curso aberto cresce com o conteúdo: a foto fica no topo e o texto embaixo */
+  .acc { flex-direction: column; height: auto; }
+  .p.open { flex: none; height: auto; min-height: 476px; }
+  .p.open .in { position: relative; padding-top: 220px; }
   .p { flex: none; height: 92px; transition: height .7s cubic-bezier(.7, 0, .2, 1); }
-  .p.open { height: 660px; }
   .ar { display: none; }
   .in h3 { font-size: 34px; }
   .dark section { padding-left: 6vw; padding-right: 6vw; }
