@@ -81,7 +81,7 @@ function drawCourses() {
 
   $('#acc').innerHTML = list.map((x, i) => {
     const im = x.img || c.img;
-    const msg = 'Olá! Quero participar do curso ' + x.name;
+    const msg = +x.price > 0 ? 'Olá! Quero participar do curso ' + x.name : 'Olá! Quero saber os valores e as próximas turmas do ' + x.name + '.';
     return `
     <div class="p ${i === S.open ? 'open' : ''}" data-act="openCourse" data-i="${i}">
       <div class="bg" ${bgImg(im)} data-grad="linear-gradient(160deg,${COURSE_BG[i % 3]})"></div>
@@ -92,10 +92,10 @@ function drawCourses() {
         </span>
         <h3>${esc(x.name)}</h3>
         <div>${esc(x.desc)}</div>
-        <small><b>Conteúdo:</b> ${esc(x.prog).replace(/\n/g, ' · ')}</small>
-        <small><b>Pagamento:</b> ${esc(x.pay)}</small>
-        <small><b>Inscrição:</b> ${esc(x.info)}</small>
-        <div><span class="price">${brl(x.price)}</span> &nbsp;<a class="btn s" target="_blank" rel="noopener" href="${waLink(c.wa, msg)}">Quero participar</a></div>
+        ${x.prog ? `<small><b>Conteúdo:</b> ${esc(x.prog).replace(/\n/g, ' · ')}</small>` : ''}
+        ${x.pay ? `<small><b>Pagamento:</b> ${esc(x.pay)}</small>` : ''}
+        ${x.info ? `<small><b>Inscrição:</b> ${esc(x.info)}</small>` : ''}
+        <div>${+x.price > 0 ? `<span class="price">${brl(x.price)}</span> &nbsp;` : ''}<a class="btn s" target="_blank" rel="noopener" href="${waLink(c.wa, msg)}">${+x.price > 0 ? 'Quero participar' : 'Consultar valores'}</a></div>
       </div>
     </div>`;
   }).join('');

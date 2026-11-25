@@ -31,9 +31,21 @@ const DEF = {
   ],
 
   courses: [
-    { id: 'c1', name: 'Design Profissional', desc: 'Do mapeamento à finalização.', prog: 'Visagismo\nMapeamento\nTécnicas de design', mode: 'Presencial', dur: '16h', price: 1200, pay: 'Pix ou até 6x no cartão', info: 'Vagas limitadas. Fale pelo WhatsApp.', img: '', on: true, excl: false },
-    { id: 'c2', name: 'Henna Avançada', desc: 'Colorimetria e fixação.', prog: 'Colorimetria\nAplicação', mode: 'Presencial', dur: '8h', price: 700, pay: 'Pix ou cartão', info: 'Turmas mensais.', img: '', on: true, excl: true },
-    { id: 'c3', name: 'Lamination Pro', desc: 'Técnica completa.', prog: 'Preparo\nLaminação', mode: 'Online', dur: '6h', price: 500, pay: 'Pix ou cartão', info: 'Acesso por 12 meses.', img: '', on: true, excl: false }
+    {
+      id: 'c1', name: 'Design Personalizado',
+      desc: 'Curso de sobrancelhas com teoria e prática. Não precisa ter experiência.',
+      prog: 'Visagismo e mapeamento\nDesign com pinça e linha\nHenna\nCertificado e kit iniciante',
+      mode: 'Presencial', dur: '1 dia, 8 horas', price: 600,
+      pay: 'PIX ou cartão', info: '',
+      img: '', on: true, excl: false
+    },
+    {
+      id: 'c2', name: 'Curso de Cílios',
+      desc: 'Curso presencial de cílios em dois dias de imersão.',
+      prog: '', mode: 'Presencial', dur: '2 dias, 16 horas', price: '',
+      pay: '', info: 'Fale pelo WhatsApp para saber valores e próximas turmas.',
+      img: '', on: true, excl: false
+    }
   ],
 
   feedbacks: [
