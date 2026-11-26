@@ -56,11 +56,11 @@ function drawBanners() {
 /* ---------- serviços ---------- */
 function drawServices() {
   const card = s => `
-    <div class="card">
+    <div class="card ${safeMedia(s.img) ? '' : 'noimg'}">
       <div class="ph" ${bgImg(s.img)}></div>
       <div class="txt">
         <h3>${esc(s.name)}</h3>
-        <p class="meta">${esc(s.desc)}<br>⏱ ${esc(durText(s))}</p>
+        <p class="meta">${s.desc ? esc(s.desc) + '<br>' : ''}⏱ ${esc(durText(s))}</p>
         <span class="price">${brl(s.price)}</span> &nbsp;
         <button class="btn s" data-act="book" data-id="${esc(s.id)}">Agendar</button>
       </div>
