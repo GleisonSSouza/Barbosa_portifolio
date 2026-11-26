@@ -56,7 +56,7 @@ function drawBanners() {
 /* ---------- serviços ---------- */
 function drawServices() {
   const card = s => `
-    <div class="card ${safeMedia(s.img) ? '' : 'noimg'}">
+    <div class="card">
       <div class="ph" ${bgImg(s.img)}></div>
       <div class="txt">
         <h3>${esc(s.name)}</h3>
