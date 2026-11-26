@@ -45,6 +45,8 @@
 .card h3 { color: #fff; font-size: 24px; }
 .meta { color: var(--mut); font-size: 14px; margin: 6px 0 14px; }
 .card .meta { color: #EDE6D9; }
+.card .price { color: #d9c2a3; }   /* preço legível sobre o fundo escuro */
+.card.noimg { height: 250px; }      /* sem foto: card mais baixo */
 .services-note { margin-top: 36px; }
 
 /* ---------- cursos (sanfona) ---------- */
@@ -124,6 +126,7 @@
 
 @media (max-width: 800px) {
   .hero { grid-template-columns: 1fr; }
+  .card.noimg { height: 230px; }
   .portrait { max-width: 320px; }
   /* no celular o curso aberto cresce com o conteúdo: a foto fica no topo e o texto embaixo */
   .acc { flex-direction: column; height: auto; }
