@@ -26,21 +26,21 @@ const DEF = {
 
   // dur = minutos que o horário ocupa na agenda; durTxt = duração mostrada no site
   services: [
-    { id: 'd1', cat: 'Design de Sobrancelhas', name: 'Design Personalizado sem henna', desc: '', price: 40, dur: 40, durTxt: '30 a 40 min', img: '', on: true },
-    { id: 'd2', cat: 'Design de Sobrancelhas', name: 'Design Personalizado com henna', desc: '', price: 55, dur: 60, durTxt: '45 min a 1h', img: '', on: true },
-    { id: 'd3', cat: 'Brow Lamination', name: 'Brow Lamination sem tintura', desc: '', price: 140, dur: 80, durTxt: '1h a 1h20', img: '', on: true },
-    { id: 'd4', cat: 'Brow Lamination', name: 'Brow Lamination com tintura', desc: '', price: 155, dur: 90, durTxt: '1h15 a 1h30', img: '', on: true },
-    { id: 'd5', cat: 'Extensão de Cílios', name: 'Volume Egípcio 5D', desc: 'Manutenção R$ 95 após 20 dias.', price: 150, dur: 90, durTxt: '1h30', img: '', on: true },
-    { id: 'd6', cat: 'Extensão de Cílios', name: 'Volume Egípcio 5D marrom', desc: 'Manutenção R$ 95 após 20 dias.', price: 150, dur: 90, durTxt: '1h30', img: '', on: true },
-    { id: 'd7', cat: 'Extensão de Cílios', name: 'Volume Fio U', desc: 'Manutenção R$ 95 após 20 dias.', price: 150, dur: 90, durTxt: '1h30', img: '', on: true },
-    { id: 'd8', cat: 'Extensão de Cílios', name: 'Volume Gringo', desc: 'Manutenção R$ 99 após 20 dias.', price: 170, dur: 90, durTxt: '1h30', img: '', on: true },
-    { id: 'd9', cat: 'Extensão de Cílios', name: 'Fox', desc: 'Manutenção R$ 99 após 20 dias.', price: 180, dur: 120, durTxt: '1h40 a 2h', img: '', on: true },
-    { id: 'd10', cat: 'Extensão de Cílios', name: 'Efeito Delineado', desc: 'Manutenção R$ 99 após 20 dias.', price: 180, dur: 120, durTxt: 'a confirmar', img: '', on: true },
-    { id: 'd11', cat: 'Extensão de Cílios', name: 'Califórnia', desc: 'Técnica tendência natural. Sem manutenção: a durabilidade varia com o ciclo dos fios e os cuidados posteriores.', price: 200, dur: 120, durTxt: '2h', img: '', on: true },
-    { id: 'd12', cat: 'Extensão de Cílios', name: 'Hiper Fox', desc: 'Técnica tendência natural (visagismo e naturalidade).', price: 200, dur: 120, durTxt: '2h', img: '', on: true },
-    { id: 'd13', cat: 'Epilação', name: 'Buço e queixo (linha)', desc: 'Finaliza com um produto para acalmar a pele.', price: 20, dur: 30, durTxt: 'a confirmar', img: '', on: true },
-    { id: 'd14', cat: 'Epilação', name: 'Epilação facial', desc: 'Finaliza com um produto para acalmar a pele.', price: 35, dur: 30, durTxt: 'a confirmar', img: '', on: true },
-    { id: 'd15', cat: 'Micropigmentação', name: 'Micropigmentação Shadow', desc: 'Retoque após 45 dias.', price: 450, dur: 120, durTxt: 'a confirmar', img: '', on: true }
+    { id: 'd1', cat: 'Design de Sobrancelhas', name: 'Design Personalizado sem henna', desc: '', price: 40, dur: 40, durTxt: '30 a 40 min', img: 'assets/img/servicos/design-sem-henna.webp', on: true },
+    { id: 'd2', cat: 'Design de Sobrancelhas', name: 'Design Personalizado com henna', desc: '', price: 55, dur: 60, durTxt: '45 min a 1h', img: 'assets/img/servicos/design-com-henna.webp', on: true },
+    { id: 'd3', cat: 'Brow Lamination', name: 'Brow Lamination sem tintura', desc: '', price: 140, dur: 80, durTxt: '1h a 1h20', img: 'assets/img/servicos/lamination-sem.webp', on: true },
+    { id: 'd4', cat: 'Brow Lamination', name: 'Brow Lamination com tintura', desc: '', price: 155, dur: 90, durTxt: '1h15 a 1h30', img: 'assets/img/servicos/lamination-com.webp', on: true },
+    { id: 'd5', cat: 'Extensão de Cílios', name: 'Volume Egípcio 5D', desc: 'Manutenção R$ 95 após 20 dias.', price: 150, dur: 90, durTxt: '1h30', img: 'assets/img/servicos/volume-egipcio.webp', on: true },
+    { id: 'd6', cat: 'Extensão de Cílios', name: 'Volume Egípcio 5D marrom', desc: 'Manutenção R$ 95 após 20 dias.', price: 150, dur: 90, durTxt: '1h30', img: 'assets/img/servicos/volume-marrom.webp', on: true },
+    { id: 'd7', cat: 'Extensão de Cílios', name: 'Volume Fio U', desc: 'Manutenção R$ 95 após 20 dias.', price: 150, dur: 90, durTxt: '1h30', img: 'assets/img/servicos/volume-fio-u.webp', on: true },
+    { id: 'd8', cat: 'Extensão de Cílios', name: 'Volume Gringo', desc: 'Manutenção R$ 99 após 20 dias.', price: 170, dur: 90, durTxt: '1h30', img: 'assets/img/servicos/volume-gringo.webp', on: true },
+    { id: 'd9', cat: 'Extensão de Cílios', name: 'Fox', desc: 'Manutenção R$ 99 após 20 dias.', price: 180, dur: 120, durTxt: '1h40 a 2h', img: 'assets/img/servicos/fox.webp', on: true },
+    { id: 'd10', cat: 'Extensão de Cílios', name: 'Efeito Delineado', desc: 'Manutenção R$ 99 após 20 dias.', price: 180, dur: 120, durTxt: 'a confirmar', img: 'assets/img/servicos/efeito-delineado.webp', on: true },
+    { id: 'd11', cat: 'Extensão de Cílios', name: 'Califórnia', desc: 'Técnica tendência natural. Sem manutenção: a durabilidade varia com o ciclo dos fios e os cuidados posteriores.', price: 200, dur: 120, durTxt: '2h', img: 'assets/img/servicos/california.webp', on: true },
+    { id: 'd12', cat: 'Extensão de Cílios', name: 'Hiper Fox', desc: 'Técnica tendência natural (visagismo e naturalidade).', price: 200, dur: 120, durTxt: '2h', img: 'assets/img/servicos/hiper-fox.webp', on: true },
+    { id: 'd13', cat: 'Epilação', name: 'Buço e queixo (linha)', desc: 'Finaliza com um produto para acalmar a pele.', price: 20, dur: 30, durTxt: 'a confirmar', img: 'assets/img/servicos/buco-queixo.webp', on: true },
+    { id: 'd14', cat: 'Epilação', name: 'Epilação facial', desc: 'Finaliza com um produto para acalmar a pele.', price: 35, dur: 30, durTxt: 'a confirmar', img: 'assets/img/servicos/epilacao-facial.webp', on: true },
+    { id: 'd15', cat: 'Micropigmentação', name: 'Micropigmentação Shadow', desc: 'Retoque após 45 dias.', price: 450, dur: 120, durTxt: 'a confirmar', img: 'assets/img/servicos/micropigmentacao.webp', on: true }
   ],
 
   courses: [
